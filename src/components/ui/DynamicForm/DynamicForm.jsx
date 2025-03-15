@@ -226,7 +226,7 @@ function handlePrint() {
             {items.map((item, index) => (
               <div
                 key={index}
-                className="grid items-center grid-cols-6 gap-6 p-6 border border-gray-200 rounded-md"
+                className="grid items-center mb-6 grid-cols-6 gap-6 p-6 border border-gray-200 rounded-md"
               >
                 {/* Description */}
                 <div className="w-full col-span-3">
@@ -312,7 +312,7 @@ function handlePrint() {
                 <Button
                   loading={loading ? true : false}
                   type="submit"
-                  className="text-sm bg-blue-600 text-white font-medium rounded-sm"
+                  className="text-sm bg-blue-600 hover:bg-blue-800 text-white font-medium rounded-sm"
                 >
                   Save invoice
                 </Button>
@@ -327,7 +327,7 @@ function handlePrint() {
             <div className="mt-4">
               <Button
                 type="button"
-                className="text-sm bg-green-600 text-white"
+                className="text-sm bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => {
                   handlePrint();
                   resetForm();

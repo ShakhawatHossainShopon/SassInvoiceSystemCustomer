@@ -6,6 +6,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 
 const navItems = [
   {
@@ -14,9 +16,14 @@ const navItems = [
     path: "/dashboard",
   },
   {
-    icon: <DashboardRoundedIcon />,
+    icon: <LocalPrintshopIcon />,
     name: "Add Invoice",
     path: "/dashboard/addInvoice",
+  },
+  {
+    icon: <ManageHistoryIcon />,
+    name: "All Invoices",
+    path: "/dashboard/allInvoice",
   },
 ];
 
