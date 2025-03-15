@@ -1,45 +1,37 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@/components/ui/button/Button";
 import axios from "axios";
+import PrintIcon from '@mui/icons-material/Print';
 
 const DynamicForm = () => {
-  const [items, setItems] = useState([
-    { description: "", quantity: 1, price: 0 },
-  ]);
+  const [shopData, setSetShop] = useState();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [items, setItems] = useState([{ description: "", quantity: 1, price: 0 }]);
   const [total, setTotal] = useState(0);
+  const [latestInvoice, setLatestInvoice] = useState(null); // Store only the latest invoice
 
-  // Handle change in the input fields
   const handleChange = (e, index, field) => {
     const updatedItems = [...items];
     updatedItems[index][field] = e.target.value;
 
-    // Recalculate the total whenever an item's value changes
-    const updatedTotal = updatedItems.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0
-    );
+    const updatedTotal = updatedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
     setTotal(updatedTotal);
     setItems(updatedItems);
   };
 
-  // Handle adding a new item to the form
   const handleAddItem = () => {
     setItems([...items, { description: "", quantity: 1, price: 0 }]);
   };
 
-  // Handle removing an item from the form
   const handleRemoveItem = (index) => {
     const updatedItems = items.filter((item, idx) => idx !== index);
-    const updatedTotal = updatedItems.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0
-    );
+    const updatedTotal = updatedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
     setTotal(updatedTotal);
     setItems(updatedItems);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,14 +48,174 @@ const DynamicForm = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${baseUrl}/invoice/saveInvoice`,
-        FormData
-      );
-      console.log(response);
+      setLoading(true); // Start loading
+      const response = await axios.post(`${baseUrl}/invoice/saveInvoice`, FormData);
+      setLatestInvoice(response.data.latestInvoice); // Store only the latest invoice in the state
+      setError(null); // Reset any error
     } catch (error) {
-      console.log("Login error:", error);
+      console.log("Error:", error);
+      setError(error); // Set error state if the request fails
+    } finally {
+      setLoading(false); // Set loading to false when done
     }
+  };
+
+  useEffect(()=>{
+    const fetchData = async () =>{
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+    if (!baseUrl) {
+      console.log("Base URL is undefined!");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseUrl}/Stores`);
+      setSetShop(response.data.res)
+    } catch (error) {
+      console.log("Error:", error);
+    }
+    }
+    fetchData()
+  },[])
+  console.log(shopData);
+  
+function handlePrint() {
+  const { invoiceId, date, amount, items } = latestInvoice;
+
+  const printWindow = window.open('', '', 'width=800,height=600');
+
+  printWindow.document.write(`
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Invoice - ${invoiceId}</title>
+        <style>
+          body {
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            color: #555;
+          }
+          table {
+            width: 100%;
+            margin: 10px 0px;
+            border-collapse: collapse;
+          }
+          th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+          }
+          th {
+            background: #343a40;
+            color: white;
+          }
+          .total {
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 10px;
+          }
+          .signature {
+            background-color: whitesmoke;
+            text-align: center;
+            padding: 10px;
+            font-size: 30px;
+            color: #e1e1e1;
+            text-transform: uppercase;
+          }
+        </style>
+      </head>
+      <body>
+        <div style="padding: 10px;">
+          <table>
+            <tr>
+              <td style="width: 50%; font-size: 20px;">
+              <strong>${shopData?.shopName}</strong><br />
+                ${invoiceId}</strong>
+                Created: ${new Date(date).toLocaleDateString()}<br />
+                Due: ${new Date(date).toLocaleDateString()}
+              </td>
+              <td style="width: 50%; text-align: right;">
+                <img style="max-width: 200px;" src="${shopData.shopImage}" />
+              </td>
+            </tr>
+          </table>
+
+          <table>
+            <tr>
+              <td style="width: 33%; line-height: 25px;">
+                <label>From:</label><br />
+                <strong>${shopData.shopName}</strong><br />
+                ${shopData?.shopAddress}
+              </td>
+              <td style="width: 33%; line-height: 25px;">
+                <label>Shop Owner</label><br />
+                <strong>${shopData.shopOwnerName}</strong><br />
+               ${shopData?.shopContact}
+              </td>
+              <td style="width: 33%; text-align: center;">
+                <span style="background: #e1e1e1; font-size: 20px; font-weight: bold; padding: 5px; color: #343a40;">
+                  PAID
+                </span>
+              </td>
+            </tr>
+          </table>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Amount</th>
+                <th>Hours/Unit</th>
+                <th>Vat Rate</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(item => `
+                <tr>
+                  <td>${item.description}</td>
+                  <td>${item.price}</td>
+                  <td>${item.quantity}</td>
+                  <td>0.00</td>
+                  <td>${item.price * item.quantity}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="total">
+            Total: ${amount}
+          </div>
+
+          <table style="width: 100%; margin-top: 20px;">
+            <tr>
+              <td style="width: 50%;">
+                <div>Notes:</div>
+                <div>Thank you for your business!</div>
+              </td>
+              <td style="width: 50%;" class="signature">
+                Authorized Signature
+              </td>
+            </tr>
+          </table>
+        </div>
+      </body>
+    </html>
+  `);
+
+  // Automatically close the window after printing
+  printWindow.onafterprint = () => {
+    printWindow.close();
+  };
+
+  printWindow.print();
+}
+
+  const resetForm = () => {
+    setItems([{ description: "", quantity: 1, price: 0 }]);
+    setTotal(0);
+    setLatestInvoice(null); // Reset the latest invoice state
   };
 
   return (
@@ -74,7 +226,7 @@ const DynamicForm = () => {
             {items.map((item, index) => (
               <div
                 key={index}
-                className="grid items-center grid-cols-6 gap-6  p-6 border border-gray-200 rounded-md"
+                className="grid items-center grid-cols-6 gap-6 p-6 border border-gray-200 rounded-md"
               >
                 {/* Description */}
                 <div className="w-full col-span-3">
@@ -158,6 +310,7 @@ const DynamicForm = () => {
                   Add Item
                 </Button>
                 <Button
+                  loading={loading ? true : false}
                   type="submit"
                   className="text-sm bg-blue-600 text-white font-medium rounded-sm"
                 >
@@ -169,6 +322,21 @@ const DynamicForm = () => {
               </div>
             </div>
           </form>
+
+          {latestInvoice && (
+            <div className="mt-4">
+              <Button
+                type="button"
+                className="text-sm bg-green-600 text-white"
+                onClick={() => {
+                  handlePrint();
+                  resetForm();
+                }}
+              >
+                Print Invoice <span><PrintIcon fontSize="small"/></span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

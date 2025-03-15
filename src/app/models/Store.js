@@ -59,6 +59,10 @@ const ShopSchema = new mongoose.Schema({
   invoiceCount: {
     type: Number,
   },
+  permission: {
+    type: Boolean,
+    default: true,
+  },
   invoices: [InvoiceSchema], // Array of invoices
 });
 
