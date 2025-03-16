@@ -40,5 +40,5 @@ export function middleware(request) {
 
 // Corrected matcher for API routes and specific pages
 export const config = {
-  matcher: ["/", "/dashboard", "/login", "/api/**"], // Use '/api/**' to match all API routes
+  matcher: ["/", "/dashboard", "/login", "/api/:path*"], // Use '/api/:path*' to match all API routes
 };
