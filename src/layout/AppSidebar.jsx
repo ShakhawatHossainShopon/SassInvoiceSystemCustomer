@@ -1,13 +1,12 @@
 "use client";
 import React from "react";
-import Logo from "@/assets/logo2.PNG";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
-import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import ManageHistoryIcon from "@mui/icons-material/ManageHistory";
 
 const navItems = [
   {
@@ -57,23 +56,10 @@ const AppSidebar = () => {
         <Link href="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <Image
-                className="dark:hidden"
-                src={Logo}
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <Image
-                className="hidden dark:block"
-                src={Logo}
-                alt="Logo"
-                width={150}
-                height={40}
-              />
+              <p className="text-xl">Sass Invoice System</p>
             </>
           ) : (
-            <Image src={Logo} alt="logo" width={32} height={32} />
+            <p className="text-xl">Sass Invoice System</p>
           )}
         </Link>
       </div>
