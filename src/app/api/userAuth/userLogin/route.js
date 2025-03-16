@@ -35,7 +35,6 @@ export async function POST() {
     });
     return res;
   } catch (error) {
-    console.error("MongoDB Connection Error:", error);
-    return NextResponse.json({ error: "Failed to connect to MongoDB" }, { status: 500 });
+    return NextResponse.json({ error: `eoror: ${error}` }, { status: 500 });
   }
 }
