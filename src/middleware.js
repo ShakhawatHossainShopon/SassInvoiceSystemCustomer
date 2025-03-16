@@ -38,7 +38,7 @@ export function middleware(request) {
   return res;
 }
 
-// Apply middleware to specified routes
+// Corrected matcher for API routes and specific pages
 export const config = {
-  matcher: ["/", "/dashboard", "/login", "/api/*"], // Apply to API routes and auth pages
+  matcher: ["/", "/dashboard", "/login", "/api/**"], // Use '/api/**' to match all API routes
 };
