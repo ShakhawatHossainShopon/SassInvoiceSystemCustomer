@@ -9,6 +9,9 @@ const secretKey = process.env.JWT_SECRET;
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
+    if (!secretKey) {
+      return NextResponse.json({ error: "Jwt Missing" }, { status: 403 });
+    }
     connectToDB();
     const user = await User.findOne({ email });
 
