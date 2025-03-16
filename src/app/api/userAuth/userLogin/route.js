@@ -1,7 +1,7 @@
 import { connectToDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST() {
   try {
     await connectToDB(); // Connect to MongoDB
 
