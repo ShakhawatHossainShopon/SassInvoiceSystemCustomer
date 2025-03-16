@@ -1,9 +1,11 @@
 import User from "@/app/models/User";
 import { connectToDB } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
+import jwt from 'jsonwebtoken';
 const secretKey = process.env.JWT_SECRET;
-export async function POST() {
+export async function POST(req) {
   try {
+    const { email, password } = await req.json();
     await connectToDB(); // Connect to MongoDB
     if (!secretKey) {
       return NextResponse.json({ error: "Jwt Missing" }, { status: 403 });
