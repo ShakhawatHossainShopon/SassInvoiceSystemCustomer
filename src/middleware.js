@@ -2,31 +2,43 @@ import { NextResponse } from "next/server";
 
 export function middleware(request) {
   const token = request.cookies.get("userToken");
+
+  // Set CORS headers for all API requests
+  const res = NextResponse.next();
+  res.headers.set("Access-Control-Allow-Origin", "*"); // Replace with your frontend domain for security
+  res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle OPTIONS (preflight) request for CORS
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204 });
+  }
+
+  // Authentication-based redirects
   if (token && request.nextUrl.pathname === "/") {
-    console.log("have token path / rederected to /dashboard");
+    console.log("Token exists, redirected to /dashboard");
     return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
+  
   if (!token && request.nextUrl.pathname === "/") {
-    console.log("dont have token path / rederected to /login");
+    console.log("No token, redirected to /login");
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
-  // If no token and trying to access `/dashboard`, redirect to `/login`
+  
   if (!token && request.nextUrl.pathname === "/dashboard") {
-    console.log("Not have token path /dashboard rederected to /login");
+    console.log("No token, redirected to /login from /dashboard");
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
-  // If there is a token and trying to access `/login`, redirect to `/dashboard`
   if (token && request.nextUrl.pathname === "/login") {
-    console.log("have token path /login rederected to /dashboard");
+    console.log("Token exists, redirected to /dashboard from /login");
     return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
 
-  // Allow the request to proceed
-  return NextResponse.next();
+  return res;
 }
 
-// Apply middleware to `/dashboard` and `/login` routes
+// Apply middleware to specified routes
 export const config = {
-  matcher: ["/", "/dashboard", "/login"],
+  matcher: ["/", "/dashboard", "/login", "/api/*"], // Apply to API routes and auth pages
 };
