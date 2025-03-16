@@ -1,8 +1,7 @@
 
-import User from "@/app/models/User";
 import { connectToDB } from "@/lib/mongodb";
+
 import { NextResponse } from "next/server";
-import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -12,32 +11,24 @@ if (!secretKey) {
 
 export async function POST(req) {
   try {
+    const { email, password } = await req.json(); // Parse request body
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    }
     // Connect to MongoDB
-    await connectToDB();
-    const user = await User.findOne({ email });
+    const db = await connectToDB();
 
+    if (!db) {
+      return NextResponse.json({ error: "Failed to connect to MongoDB" }, { status: 500 });
+    }
+    // Find the user in the database
+    const user = await db.collection("users").findOne({ email });
     if (!user) {
-      return NextResponse.json(
-        { error: "User Not Exist" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
-    if (user.password !== password) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 400 }
-      );
-    }
-    const role = "User";
-    const token = jwt.sign(
-      { userId: user._id, shopId: user.shopId, role: role }, // Include userId and shopId in the payload
-      secretKey
-    );
-    const res = NextResponse.json({ message: "Login successful" });
-    res.cookies.set("userToken", token, {
-      httpOnly: true,
-    });
-    return res;
+
+
+    return NextResponse.json({ message: "MongoDB connected successfully!" });
   } catch (error) {
     console.error("Error in login handler:", error);
     return NextResponse.json({ error: "Failed to login" }, { status: 500 });
