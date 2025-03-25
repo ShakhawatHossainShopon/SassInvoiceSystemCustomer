@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from "react";
 import Button from "@/components/ui/button/Button";
 import axios from "axios";
-import PrintIcon from '@mui/icons-material/Print';
+import PrintIcon from "@mui/icons-material/Print";
 
 const DynamicForm = () => {
   const [shopData, setSetShop] = useState();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [items, setItems] = useState([{ description: "", quantity: 1, price: 0 }]);
+  const [items, setItems] = useState([
+    { description: "", quantity: 1, price: 0 },
+  ]);
   const [total, setTotal] = useState(0);
   const [latestInvoice, setLatestInvoice] = useState(null); // Store only the latest invoice
 
@@ -16,7 +18,10 @@ const DynamicForm = () => {
     const updatedItems = [...items];
     updatedItems[index][field] = e.target.value;
 
-    const updatedTotal = updatedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    const updatedTotal = updatedItems.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    );
     setTotal(updatedTotal);
     setItems(updatedItems);
   };
@@ -27,7 +32,10 @@ const DynamicForm = () => {
 
   const handleRemoveItem = (index) => {
     const updatedItems = items.filter((item, idx) => idx !== index);
-    const updatedTotal = updatedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    const updatedTotal = updatedItems.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    );
     setTotal(updatedTotal);
     setItems(updatedItems);
   };
@@ -49,7 +57,10 @@ const DynamicForm = () => {
 
     try {
       setLoading(true); // Start loading
-      const response = await axios.post(`${baseUrl}/invoice/saveInvoice`, FormData);
+      const response = await axios.post(
+        `${baseUrl}/invoice/saveInvoice`,
+        FormData
+      );
       setLatestInvoice(response.data.latestInvoice); // Store only the latest invoice in the state
       setError(null); // Reset any error
     } catch (error) {
@@ -60,31 +71,31 @@ const DynamicForm = () => {
     }
   };
 
-  useEffect(()=>{
-    const fetchData = async () =>{
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  useEffect(() => {
+    const fetchData = async () => {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-    if (!baseUrl) {
-      console.log("Base URL is undefined!");
-      return;
-    }
-    try {
-      const response = await axios.get(`${baseUrl}/Stores`);
-      setSetShop(response.data.res)
-    } catch (error) {
-      console.log("Error:", error);
-    }
-    }
-    fetchData()
-  },[])
+      if (!baseUrl) {
+        console.log("Base URL is undefined!");
+        return;
+      }
+      try {
+        const response = await axios.get(`${baseUrl}/Stores`);
+        setSetShop(response.data.res);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+    fetchData();
+  }, []);
   console.log(shopData);
-  
-function handlePrint() {
-  const { invoiceId, date, amount, items } = latestInvoice;
 
-  const printWindow = window.open('', '', 'width=800,height=600');
+  function handlePrint() {
+    const { invoiceId, date, amount, items } = latestInvoice;
 
-  printWindow.document.write(`
+    const printWindow = window.open("", "", "width=800,height=600");
+
+    printWindow.document.write(`
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -172,7 +183,9 @@ function handlePrint() {
               </tr>
             </thead>
             <tbody>
-              ${items.map(item => `
+              ${items
+                .map(
+                  (item) => `
                 <tr>
                   <td>${item.description}</td>
                   <td>${item.price}</td>
@@ -180,7 +193,9 @@ function handlePrint() {
                   <td>0.00</td>
                   <td>${item.price * item.quantity}</td>
                 </tr>
-              `).join('')}
+              `
+                )
+                .join("")}
             </tbody>
           </table>
 
@@ -204,13 +219,13 @@ function handlePrint() {
     </html>
   `);
 
-  // Automatically close the window after printing
-  printWindow.onafterprint = () => {
-    printWindow.close();
-  };
+    // Automatically close the window after printing
+    printWindow.onafterprint = () => {
+      printWindow.close();
+    };
 
-  printWindow.print();
-}
+    printWindow.print();
+  }
 
   const resetForm = () => {
     setItems([{ description: "", quantity: 1, price: 0 }]);
@@ -220,13 +235,13 @@ function handlePrint() {
 
   return (
     <div>
-      <div className="p-4">
+      <div className="md:p-4 p-0">
         <div className="space-y-6">
           <form onSubmit={handleSubmit}>
             {items.map((item, index) => (
               <div
                 key={index}
-                className="grid items-center mb-6 grid-cols-6 gap-6 p-6 border border-gray-200 rounded-md"
+                className="md:grid items-center mb-6 md:grid-cols-6 md:gap-6 p-0 space-y-6 md:space-y-0 md:p-6 md:border border-gray-200 rounded-md"
               >
                 {/* Description */}
                 <div className="w-full col-span-3">
@@ -301,7 +316,7 @@ function handlePrint() {
               </div>
             ))}
             <div className="flex justify-between">
-              <div className="flex gap-4 mt-4">
+              <div className="md:flex gap-4 md:mt-4 space-y-6 md:space-y-0">
                 <Button
                   type="button"
                   className="text-sm"
@@ -333,7 +348,10 @@ function handlePrint() {
                   resetForm();
                 }}
               >
-                Print Invoice <span><PrintIcon fontSize="small"/></span>
+                Print Invoice{" "}
+                <span>
+                  <PrintIcon fontSize="small" />
+                </span>
               </Button>
             </div>
           )}

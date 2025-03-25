@@ -47,7 +47,9 @@ const page = () => {
     console.log("Invoice ID to print:", invoiceId);
 
     // Find the invoice data using the invoiceId
-    const invoiceData = invoices.find((invoice) => invoice.invoiceId === invoiceId);
+    const invoiceData = invoices.find(
+      (invoice) => invoice.invoiceId === invoiceId
+    );
 
     if (!invoiceData) {
       console.log("Invoice data not found!");
@@ -106,7 +108,9 @@ const page = () => {
                     <td style="width: 50%; font-size: 20px;">
                       <strong>${shop?.shopName}</strong><br />
                       ${invoiceId}</strong>
-                      Created: ${new Date(invoiceData.date).toLocaleDateString()}<br />
+                      Created: ${new Date(
+                        invoiceData.date
+                      ).toLocaleDateString()}<br />
                       Due: ${new Date(invoiceData.date).toLocaleDateString()}
                     </td>
                     <td style="width: 50%; text-align: right;">
@@ -146,7 +150,9 @@ const page = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    ${invoiceData.items.map(item => `
+                    ${invoiceData.items
+                      .map(
+                        (item) => `
                       <tr>
                         <td>${item.description}</td>
                         <td>${item.price}</td>
@@ -154,7 +160,9 @@ const page = () => {
                         <td>0.00</td>
                         <td>${item.price * item.quantity}</td>
                       </tr>
-                    `).join('')}
+                    `
+                      )
+                      .join("")}
                   </tbody>
                 </table>
 
@@ -181,7 +189,7 @@ const page = () => {
         printWindow.print();
         // Close the window after printing or canceling the print
         printWindow.onbeforeunload = () => {
-        printWindow.close();
+          printWindow.close();
         };
       }
     }
@@ -193,8 +201,8 @@ const page = () => {
         All Invoices
       </h3>
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-        <div className="p-6">
-          <h3 className="mb-2 mx-4 text-lg font-semibold text-gray-800 dark:text-white/90">
+        <div className=" md:p-6">
+          <h3 className="mb-2 mx-4 text-sm md:text-lg font-semibold text-gray-800 dark:text-white/90">
             Invoices List
           </h3>
           <div className="flex flex-col">

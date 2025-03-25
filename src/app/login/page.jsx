@@ -3,6 +3,8 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Button from "@/components/ui/button/Button";
+import LoginIcon from "@mui/icons-material/Login";
 
 function Page() {
   const router = useRouter();
@@ -48,11 +50,6 @@ function Page() {
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         <section className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
-          <img
-            alt="logo"
-            src="https://images.unsplash.com/photo-1617195737496-bc30194e3a19?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
-            className="absolute inset-0 h-full w-full object-cover opacity-80"
-          />
           <div className="hidden lg:relative lg:block lg:p-12">
             <a className="block text-white" href="#">
               <span className="sr-only">Home</span>
@@ -73,20 +70,13 @@ function Page() {
         <section className="flex items-center justify-center bg-white lg:col-span-7 lg:h-full xl:col-span-6">
           <div className="w-full max-w-md space-y-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-              <Image
-                width={100}
-                height={100}
-                className="mx-auto"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                alt="Your Company"
-              />
               <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
-                Sign in to your account (Admin)
+                ✨ Wellcome to SassInvoiceSystem
               </h2>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-6">
+              <div className="space-y-6 mx-4 sm:mx-0">
                 <div>
                   <label
                     htmlFor="email"
@@ -122,52 +112,14 @@ function Page() {
                   />
                 </div>
               </div>
-
               {error && <div className="text-red-500 text-sm">{error}</div>}
-
-              <button
-                type="submit"
-                disabled={loading} // Disable the button while loading
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              <Button
+                className="bg-blue-600 text-white hover:bg-blue-800 transition-all duration-300"
+                type={"submit"}
+                loading={loading ? true : false}
               >
-                {loading ? (
-                  <svg
-                    className="w-5 h-5 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      strokeWidth="4"
-                      stroke="currentColor"
-                      fill="none"
-                    />
-                    <path fill="currentColor" d="M4 12a8 8 0 0116 0">
-                      <animate
-                        attributeName="d"
-                        values="M4 12a8 8 0 0116 0; M4 12a8 8 0 0116 0"
-                        dur="1s"
-                        repeatCount="indefinite"
-                      />
-                    </path>
-                  </svg>
-                ) : (
-                  "Log in"
-                )}
-              </button>
-              <p className="mt-10 text-center text-sm/6 text-gray-500">
-                Not a member?
-                <a
-                  href="#"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Sign Up
-                </a>
-              </p>
+                <LoginIcon fontSize="small" /> Login Now
+              </Button>
             </form>
           </div>
         </section>
