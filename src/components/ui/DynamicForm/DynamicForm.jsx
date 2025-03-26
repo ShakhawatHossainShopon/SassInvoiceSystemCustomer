@@ -93,7 +93,8 @@ const DynamicForm = () => {
   const handlePrint = () => {
     const { invoiceId, date, amount, items } = latestInvoice;
 
-    const printWindow = window.open("", "", "width=800,height=600");
+    // Create a new hidden iframe for printing
+    const printWindow = window.open("", "_blank", "width=800,height=600");
 
     // Create the HTML content for the invoice
     printWindow.document.write(`
@@ -135,6 +136,21 @@ const DynamicForm = () => {
             color: #e1e1e1;
             text-transform: uppercase;
           }
+          /* Print specific styles */
+          @media print {
+            body {
+              width: 100%;
+              margin: 0;
+              padding: 0;
+              font-size: 12px;
+            }
+            .signature {
+              font-size: 20px;
+            }
+            .total {
+              font-size: 16px;
+            }
+          }
         </style>
       </head>
       <body>
@@ -142,14 +158,14 @@ const DynamicForm = () => {
           <table>
             <tr>
               <td style="width: 50%; font-size: 20px;">
-              <strong>${shopData?.shopName}</strong><br />
-                ${invoiceId}</strong>
+                <strong>${shopData?.shopName}</strong><br />
+                ${invoiceId}<br />
                 Created: ${new Date(date).toLocaleDateString()}<br />
                 Due: ${new Date(date).toLocaleDateString()}
               </td>
               <td style="width: 50%; text-align: right;">
                 <img id="invoice-image" style="max-width: 200px;" src="${
-                  shopData.shopImage
+                  shopData?.shopImage
                 }" />
               </td>
             </tr>
@@ -159,13 +175,13 @@ const DynamicForm = () => {
             <tr>
               <td style="width: 33%; line-height: 25px;">
                 <label>From:</label><br />
-                <strong>${shopData.shopName}</strong><br />
+                <strong>${shopData?.shopName}</strong><br />
                 ${shopData?.shopAddress}
               </td>
               <td style="width: 33%; line-height: 25px;">
-                <label>Shop Owner</label><br />
-                <strong>${shopData.shopOwnerName}</strong><br />
-               ${shopData?.shopContact}
+                <label>Shop Owner:</label><br />
+                <strong>${shopData?.shopOwnerName}</strong><br />
+                ${shopData?.shopContact}
               </td>
               <td style="width: 33%; text-align: center;">
                 <span style="background: #e1e1e1; font-size: 20px; font-weight: bold; padding: 5px; color: #343a40;">
@@ -228,12 +244,12 @@ const DynamicForm = () => {
       printWindow.print();
     };
 
-    // Use the `onafterprint` event to close the window
+    // Ensure the window closes after printing or cancellation
     printWindow.onafterprint = () => {
       printWindow.close();
     };
 
-    // If the user cancels the print dialog, the window will also be closed.
+    // Handle case if the user cancels the print dialog (fallback)
     printWindow.onbeforeunload = () => {
       printWindow.close();
     };
