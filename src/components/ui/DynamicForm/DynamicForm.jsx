@@ -90,11 +90,12 @@ const DynamicForm = () => {
   }, []);
   console.log(shopData);
 
-  function handlePrint() {
+  const handlePrint = () => {
     const { invoiceId, date, amount, items } = latestInvoice;
 
     const printWindow = window.open("", "", "width=800,height=600");
 
+    // Create the HTML content for the invoice
     printWindow.document.write(`
     <html lang="en">
       <head>
@@ -147,7 +148,9 @@ const DynamicForm = () => {
                 Due: ${new Date(date).toLocaleDateString()}
               </td>
               <td style="width: 50%; text-align: right;">
-                <img style="max-width: 200px;" src="${shopData.shopImage}" />
+                <img id="invoice-image" style="max-width: 200px;" src="${
+                  shopData.shopImage
+                }" />
               </td>
             </tr>
           </table>
@@ -185,7 +188,7 @@ const DynamicForm = () => {
             <tbody>
               ${items
                 .map(
-                  (item) => `
+                  (item) => ` 
                 <tr>
                   <td>${item.description}</td>
                   <td>${item.price}</td>
@@ -219,13 +222,22 @@ const DynamicForm = () => {
     </html>
   `);
 
-    // Automatically close the window after printing
+    // Wait for the image to load before printing
+    const imageElement = printWindow.document.getElementById("invoice-image");
+    imageElement.onload = () => {
+      printWindow.print();
+    };
+
+    // Use the `onafterprint` event to close the window
     printWindow.onafterprint = () => {
       printWindow.close();
     };
 
-    printWindow.print();
-  }
+    // If the user cancels the print dialog, the window will also be closed.
+    printWindow.onbeforeunload = () => {
+      printWindow.close();
+    };
+  };
 
   const resetForm = () => {
     setItems([{ description: "", quantity: 1, price: 0 }]);
